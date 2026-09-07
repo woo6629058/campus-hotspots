@@ -1,0 +1,9 @@
+# macOS / Windows
+.DS_Store
+Thumbs.db
+
+# Editor settings and temporary files
+.vscode/
+.idea/
+*.swp
+*~
