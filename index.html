@@ -4,15 +4,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>나만의 캠퍼스 핫스팟</title>
+    <link rel="stylesheet" href="styles.css">
   </head>
-  <body>
-    <header style="background-color: #f3eee7; padding: 24px;">
+  <body class="page-home">
+    <div class="page-shell">
+    <header class="site-header">
+      <p class="eyebrow">Campus Hotspots</p>
       <h1>나만의 캠퍼스 핫스팟</h1>
-      <p>공부와 휴식 사이, 가톨릭대학교 성심교정에서 나에게 의미 있고 다른 학생에게도 소개하고 싶은 세 장소를 소개합니다.</p>
+      <p class="lead">공부와 휴식 사이, 가톨릭대학교 성심교정에서 나에게 의미 있고 다른 학생에게도 소개하고 싶은 세 장소를 소개합니다.</p>
     </header>
 
     <main>
-      <section>
+      <section class="panel">
         <h2>이 장소들을 고른 이유</h2>
         <ol>
           <li><strong>니콜스관 4층 카페 하랑</strong>은 수업 사이에 친구와 이야기하거나 넓은 책상에서 잠깐 공부하기 좋아 골랐습니다.</li>
@@ -24,29 +27,29 @@
       <section>
         <h2>소개하고 싶은 세 장소</h2>
 
-        <article style="border: 1px solid #999; margin-bottom: 20px; padding: 16px;">
+        <article class="place-card">
           <h3>1. 니콜스관 4층 카페 하랑</h3>
           <img src="images/cafe-harang.webp" alt="넓은 책상과 창가 좌석이 있는 니콜스관 4층 카페 하랑 내부" width="800" height="382">
           <p>넓은 창과 차분한 분위기 속에서 공부하거나 쉬기 좋은 공간입니다.</p>
-          <p><a href="cafe-harang.html">카페 하랑 자세히 보기</a></p>
+          <p><a class="action" href="cafe-harang.html">카페 하랑 자세히 보기</a></p>
         </article>
 
-        <article style="border: 1px solid #999; margin-bottom: 20px; padding: 16px;">
+        <article class="place-card">
           <h3>2. 하늘동산</h3>
           <img src="images/garden-1.webp" alt="분홍색 벚꽃나무가 활짝 핀 봄날의 하늘동산" width="640" height="480">
           <p>계절의 빛과 바람을 느끼며 잠시 걸을 수 있는 캠퍼스 속 쉼표입니다.</p>
-          <p><a href="haneul-garden.html">하늘동산 자세히 보기</a></p>
+          <p><a class="action" href="haneul-garden.html">하늘동산 자세히 보기</a></p>
         </article>
 
-        <article style="border: 1px solid #999; margin-bottom: 20px; padding: 16px;">
+        <article class="place-card">
           <h3>3. 베리타스관 중앙도서관</h3>
           <img src="images/library-1.webp" alt="분수 뒤로 보이는 베리타스관 중앙도서관 외부 전경" width="640" height="480">
           <p>책과 창밖 풍경 사이에서 조용히 호흡을 고를 수 있는 장소입니다.</p>
-          <p><a href="veritas-central-library.html">베리타스 중앙도서관 자세히 보기</a></p>
+          <p><a class="action" href="veritas-central-library.html">베리타스 중앙도서관 자세히 보기</a></p>
         </article>
       </section>
 
-      <section>
+      <section class="panel">
         <h2>추천 방문 순서</h2>
         <ol>
           <li>니콜스관 4층 카페 하랑에서 잠시 숨을 고르며 출발합니다.</li>
@@ -56,8 +59,7 @@
       </section>
     </main>
 
-    <footer>
-      <hr>
+    <footer class="site-footer">
       <p>작성자: 허건우</p>
       <p>
         장소 정보 출처:
@@ -68,5 +70,6 @@
         <a href="https://namu.wiki/w/%EA%B0%80%ED%86%A8%EB%A6%AD%EB%8C%80%ED%95%99%EA%B5%90/%EC%84%B1%EC%8B%AC%EA%B5%90%EC%A0%95/%EC%BA%A0%ED%8D%BC%EC%8A%A4" target="_blank" rel="noopener">나무위키 · 가톨릭대학교 성심교정 캠퍼스</a>
       </p>
     </footer>
+    </div>
   </body>
 </html>
