@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>별자리 산책로 미니 게임 | 4주차 Canvas 게임</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="game.js" defer></script>
+  </head>
+  <body class="game-page">
+    <div class="page-shell">
+      <header class="hero game-hero">
+        <p class="eyebrow">Canvas Path Game · 30 Seconds</p>
+        <h1>별자리 산책로 미니 게임</h1>
+        <p class="lead">밤의 캠퍼스에 흩어진 별을 번호 순서대로 선택해 빛나는 산책로를 완성하세요. 단계가 올라갈수록 연결할 별이 하나씩 늘어납니다.</p>
+        <nav class="week-nav" aria-label="4주차 페이지 이동">
+          <a href="index.html">장소 탐험</a>
+          <a href="statistics.html">데이터 통계</a>
+          <a href="../index.html">2·3주차 홈페이지</a>
+        </nav>
+      </header>
+
+      <main class="game-main">
+        <section class="game-shell" aria-labelledby="game-title">
+          <div class="game-heading">
+            <div>
+              <p class="step">Connect the constellation</p>
+              <h2 id="game-title">30초 동안 별자리 길을 이어 보세요</h2>
+            </div>
+            <button id="start-button" class="start-button" type="button">게임 시작</button>
+          </div>
+
+          <div class="hud" aria-label="게임 상태">
+            <p>점수 <strong id="score">0</strong></p>
+            <p>남은 시간 <strong id="time">30</strong>초</p>
+            <p>기회 <strong id="lives">3</strong></p>
+            <p>단계 <strong id="level">1</strong></p>
+          </div>
+
+          <canvas id="game" width="900" height="500" tabindex="0" aria-label="번호 순서대로 별을 선택해 별자리 산책로를 완성하는 게임 화면">
+            이 게임을 실행하려면 Canvas를 지원하는 브라우저가 필요합니다.
+          </canvas>
+          <p id="game-message" class="game-message" role="status" aria-live="polite">게임 시작을 누른 뒤 1번 별부터 차례로 선택하세요.</p>
+        </section>
+
+        <section class="instructions" aria-labelledby="how-to-play">
+          <h2 id="how-to-play">조작과 규칙</h2>
+          <div class="instruction-grid">
+            <article>
+              <h3>컴퓨터</h3>
+              <p>마우스로 1번 별부터 번호 순서대로 클릭해 연결합니다.</p>
+            </article>
+            <article>
+              <h3>휴대전화</h3>
+              <p>손가락으로 별을 차례대로 누릅니다. Canvas 안에서는 화면이 움직이지 않습니다.</p>
+            </article>
+            <article>
+              <h3>점수와 종료</h3>
+              <p>별 하나를 이으면 +100점, 길을 완성하면 단계 보너스를 받습니다. 순서를 틀리면 기회가 줄고, 30초 또는 기회 소진 시 종료됩니다.</p>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <p>이미지와 소리 파일 없이 HTML Canvas의 도형과 글자로 직접 그렸습니다.</p>
+      </footer>
+    </div>
+  </body>
+</html>

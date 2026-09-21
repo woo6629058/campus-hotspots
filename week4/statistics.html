@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>수도권 공공도서관 데이터 이야기 | 4주차 JavaScript 실습</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.5.2/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script src="statistics.js" defer></script>
+  </head>
+  <body class="stats-page">
+    <div class="page-shell">
+      <header class="hero stats-hero">
+        <p class="eyebrow">Public Data · Two Questions</p>
+        <h1>수도권 공공도서관을 숫자로 읽기</h1>
+        <p class="lead">전국도서관표준데이터에서 서울·인천·경기의 공공도서관 630개관을 골라, 지역별 도서관 수와 평일 야간 운영 비율을 비교합니다.</p>
+        <nav class="week-nav" aria-label="4주차 페이지 이동">
+          <a href="index.html">장소 탐험</a>
+          <a href="game.html">캠퍼스 게임</a>
+          <a href="../index.html">2·3주차 홈페이지</a>
+        </nav>
+      </header>
+
+      <main class="data-main">
+        <section class="data-intro" aria-labelledby="data-title">
+          <p class="step">공공데이터포털 전국 표준데이터</p>
+          <h2 id="data-title">같은 자료에서 서로 다른 질문 두 가지</h2>
+          <p>서울특별시·인천광역시·경기도 가운데 도서관유형이 ‘공공도서관’인 행만 사용합니다. 평일 종료 시각이 비어 있거나 올바른 시각이 아닌 행은 야간 운영 비율 계산에서만 제외하며, 결측치를 임의로 0으로 바꾸지 않습니다.</p>
+          <p><a class="download-link" href="data/metropolitan-public-libraries.csv" download>분석에 사용한 CSV 내려받기</a></p>
+        </section>
+
+        <section class="region-selector" aria-labelledby="region-title">
+          <div>
+            <p class="step">Region</p>
+            <h2 id="region-title">비교할 지역을 선택하세요</h2>
+          </div>
+          <div class="region-buttons" role="group" aria-label="분석 지역 선택">
+            <button type="button" data-region="서울특별시" aria-pressed="true">서울특별시</button>
+            <button type="button" data-region="인천광역시" aria-pressed="false">인천광역시</button>
+            <button type="button" data-region="경기도" aria-pressed="false">경기도</button>
+          </div>
+        </section>
+
+        <div class="tabs" role="group" aria-label="그래프 선택">
+          <button type="button" data-panel="library-count" aria-controls="library-count" aria-pressed="true">시군구별 도서관 수</button>
+          <button type="button" data-panel="late-hours" aria-controls="late-hours" aria-pressed="false">평일 야간 운영 비율</button>
+        </div>
+
+        <p id="data-status" class="status-message" role="status" aria-live="polite">CSV를 읽고 있습니다.</p>
+
+        <section id="library-count" class="chart-panel" aria-labelledby="library-count-title">
+          <div class="chart-heading">
+            <p class="step">Question 01 · 단위: 개관</p>
+            <h2 id="library-count-title">공공도서관이 많은 시군구는 어디일까?</h2>
+            <p><span class="selected-region-name">서울특별시</span> 공공도서관 수를 시군구별로 집계했습니다.</p>
+          </div>
+          <div class="chart-box">
+            <canvas id="library-count-chart" role="img" aria-label="서울특별시 시군구별 공공도서관 수 막대그래프"></canvas>
+          </div>
+          <div class="interpretation">
+            <p><strong>의미:</strong> 막대가 길수록 현재 CSV에 등록된 공공도서관이 많은 시군구입니다. 이름이 긴 여러 지역의 시설 수를 비교하기 위해 가로 막대그래프를 사용했습니다.</p>
+            <p id="count-finding"><strong>해석:</strong> 데이터를 불러오면 선택 지역에서 가장 많은 시군구와 가장 적은 시군구를 표시합니다.</p>
+            <p><strong>한계:</strong> 인구와 면적을 반영하지 않은 단순 시설 수이므로, 도서관 접근성이나 서비스 품질을 직접 뜻하지는 않습니다.</p>
+          </div>
+        </section>
+
+        <section id="late-hours" class="chart-panel" aria-labelledby="late-hours-title" hidden>
+          <div class="chart-heading">
+            <p class="step">Question 02 · 단위: %</p>
+            <h2 id="late-hours-title">평일 21시 이후 운영하는 도서관의 비율은 어떻게 될까?</h2>
+            <p>평일운영종료시각이 21:00 이상인 도서관을 ‘평일 야간 운영’으로 분류하고, 시군구별 유효 종료 시각 행 중 비율을 계산했습니다.</p>
+          </div>
+          <div class="chart-box">
+            <canvas id="late-hours-chart" role="img" aria-label="서울특별시 시군구별 평일 야간 운영 도서관 비율 막대그래프"></canvas>
+          </div>
+          <div class="interpretation">
+            <p><strong>의미:</strong> 시설 수가 다른 시군구를 비교하기 위해 개수 대신 비율을 사용했습니다. 100%는 유효한 평일 종료 시각을 가진 도서관이 모두 21시 이후에 닫는다는 뜻입니다.</p>
+            <p id="late-finding"><strong>해석:</strong> 데이터를 불러오면 선택 지역의 상위 시군구와 분석에 포함된 행 수를 표시합니다.</p>
+            <p><strong>한계:</strong> 표준데이터의 평일 종료 시각을 기준으로 한 비교이며 자료실별 시간, 임시 휴관과 최신 운영 변경은 반영하지 못할 수 있습니다. 방문 전 각 도서관 홈페이지를 확인해야 합니다.</p>
+          </div>
+        </section>
+
+        <section class="source-card" aria-labelledby="source-title">
+          <h2 id="source-title">대상·기간·출처</h2>
+          <dl>
+            <div><dt>대상</dt><dd>서울특별시 204개관, 인천광역시 119개관, 경기도 307개관(도서관유형 ‘공공도서관’)</dd></div>
+            <div><dt>기준</dt><dd>기관별 데이터기준일자는 CSV에 수록, 내려받은 날짜 2026년 9월 21일</dd></div>
+            <div><dt>출처</dt><dd><a href="https://www.data.go.kr/data/15013109/standard.do" target="_blank" rel="noopener">공공데이터포털 · 전국도서관표준데이터</a></dd></div>
+            <div><dt>가공</dt><dd>서울·인천·경기와 공공도서관 유형만 남겨 UTF-8 CSV로 저장하고, 집계할 때 시군구명의 불필요한 접두어·공백과 명백한 오타 1건을 정리</dd></div>
+          </dl>
+        </section>
+      </main>
+
+      <footer>
+        <p>공식 표준데이터에서 세 지역의 공공도서관만 추렸으며, 지역 버튼과 그래프 탭은 페이지 새로고침 없이 동작합니다.</p>
+      </footer>
+    </div>
+  </body>
+</html>
