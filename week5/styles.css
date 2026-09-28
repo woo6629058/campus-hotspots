@@ -155,6 +155,10 @@ h1 {
   letter-spacing: -.055em;
 }
 
+.no-break {
+  white-space: nowrap;
+}
+
 h2 {
   margin: 4px 0 12px;
   color: var(--navy-dark);
@@ -283,6 +287,7 @@ select {
 .quiz__topline,
 .section-heading {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: 18px;
   align-items: center;
@@ -422,6 +427,10 @@ summary {
   margin: 9px 0;
 }
 
+.answer-details ul {
+  padding-left: 22px;
+}
+
 .comparison-area {
   margin-top: 20px;
   padding-top: 22px;
@@ -448,6 +457,21 @@ summary {
   background: rgba(255,255,255,.72);
 }
 
+.comparison-item > strong,
+.comparison-item > span:not(.compromise) {
+  display: block;
+}
+
+.comparison-item > strong {
+  line-height: 1.5;
+}
+
+.comparison-item > span:not(.compromise) {
+  margin-top: 6px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
 .comparison-item--different {
   border-color: rgba(217,118,103,.34);
   background: #fff8f3;
@@ -455,7 +479,9 @@ summary {
 
 .compromise {
   display: block;
-  margin-top: 6px;
+  margin-top: 9px;
+  padding-top: 9px;
+  border-top: 1px dashed rgba(217,118,103,.34);
   color: #7b4739;
   font-size: .9rem;
 }
@@ -522,8 +548,24 @@ summary {
   display: block;
 }
 
+.data-view h3 {
+  margin: 0 0 12px;
+}
+
+.data-view .record > p:first-child {
+  margin: 0 0 12px;
+}
+
 .data-view ul {
   padding-left: 20px;
+}
+
+@media (min-width: 701px) {
+  .hero h1 {
+    max-width: none;
+    font-size: clamp(2.6rem, 5.2vw, 3.65rem);
+    white-space: nowrap;
+  }
 }
 
 @media (max-width: 700px) {
