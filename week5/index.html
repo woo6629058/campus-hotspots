@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="여덟 번의 선택으로 친구와 여행 취향을 비교하는 밸런스 게임">
+  <title>같이 여행 가도 괜찮을까? · 여행 취향 밸런스 게임</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="background-shape background-shape--sun" aria-hidden="true"></div>
+  <div class="background-shape background-shape--sea" aria-hidden="true"></div>
+
+  <main class="page">
+    <header class="hero">
+      <a class="back-link" href="../week4/">← 4주차 페이지로 돌아가기</a>
+      <p class="eyebrow">TRAVEL MATE BALANCE GAME</p>
+      <h1>같이 여행 가도 괜찮을까?</h1>
+      <p class="hero__intro">여덟 번의 선택으로 알아보는 우리의 여행 궁합. 같은 기기에서 친구와 번갈아 참여하고, 서로 다른 선택에는 현실적인 여행 타협안을 찾아보세요.</p>
+      <p class="privacy-note">정식 성격 진단이 아닌 대화용 놀이입니다. 결과는 현재 브라우저에만 저장되며 다른 기기의 기록과 자동으로 합쳐지지 않습니다.</p>
+    </header>
+
+    <p id="notice" class="notice" role="status" hidden></p>
+
+    <section id="home" class="card home" aria-labelledby="home-title">
+      <div>
+        <p class="section-number">01 · CHECK IN</p>
+        <h2 id="home-title">여행을 시작할 준비가 됐나요?</h2>
+        <p>별명을 작성하고 출발하세요. 작성하지 않으면 참가자 번호가 자동으로 생성됩니다.</p>
+      </div>
+      <div class="start-form">
+        <label for="nickname">별명 <span>(선택, 20자까지)</span></label>
+        <input id="nickname" maxlength="20" autocomplete="off" placeholder="예: 건우">
+        <div class="actions">
+          <button id="start" class="button button--primary" type="button">새 여행 시작</button>
+          <button id="resume" class="button" type="button" disabled>이어하기</button>
+        </div>
+        <p class="hint">새 여행을 시작하면 현재 탭에서 작성 중인 답변은 초기화되며, 이미 완료한 참가자의 기록은 유지됩니다.</p>
+      </div>
+    </section>
+
+    <section id="quiz" class="card quiz" aria-labelledby="question" hidden>
+      <div class="quiz__topline">
+        <p id="step" class="section-number"></p>
+        <p id="traveler" class="traveler"></p>
+      </div>
+      <progress id="progress" max="8" value="0" aria-label="답한 문항 수"></progress>
+      <h2 id="question" tabindex="-1"></h2>
+      <p class="question-guide">지금 여행을 떠난다고 상상하고 더 가까운 쪽을 선택해 주세요.</p>
+      <div id="choices" class="choices"></div>
+      <div class="actions actions--spread">
+        <button id="previous" class="button" type="button">이전</button>
+        <button id="next" class="button button--primary" type="button" disabled>다음</button>
+      </div>
+    </section>
+
+    <section id="result" class="card result" hidden aria-labelledby="result-title">
+      <p class="section-number">MY TRAVEL CARD</p>
+      <div class="result-card">
+        <div id="result-icon" class="result-card__icon" aria-hidden="true"></div>
+        <div>
+          <p id="result-owner" class="result-card__owner"></p>
+          <h2 id="result-title" tabindex="-1"></h2>
+          <p id="result-description"></p>
+          <p id="result-recommendation" class="recommendation"></p>
+        </div>
+      </div>
+
+      <details class="answer-details">
+        <summary>내 선택 8개 펼쳐보기</summary>
+        <ul id="result-answers"></ul>
+      </details>
+
+      <div class="comparison-area">
+        <label for="friend">이 기록과 비교할 여행 친구</label>
+        <select id="friend"><option value="">친구를 선택하세요</option></select>
+        <div id="comparison" aria-live="polite"></div>
+      </div>
+
+      <div class="actions">
+        <button id="next-person" class="button button--primary" type="button">다음 친구 도전</button>
+        <button id="go-home" class="button" type="button">첫 화면으로</button>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="history-count">
+      <div class="section-heading">
+        <div>
+          <p class="section-number">02 · TRAVEL LOG</p>
+          <h2 id="history-count">저장된 결과 0개</h2>
+        </div>
+        <span class="local-badge">이 브라우저에 저장</span>
+      </div>
+      <p class="hint">이 브라우저에 최근 완료 기록 20개를 보관합니다. 저장된 결과를 다시 열어 다른 참가자와 비교할 수 있습니다.</p>
+      <div id="history" class="history"></div>
+    </section>
+
+    <section class="card data-card" aria-labelledby="data-title">
+      <p class="section-number">03 · MY DATA</p>
+      <h2 id="data-title">내 저장 데이터 관리</h2>
+      <p>진행 중인 답변과 완료 기록을 구분해서 확인하거나 필요한 데이터만 삭제할 수 있습니다.</p>
+      <div class="actions">
+        <button id="inspect" class="button" type="button">내 저장 데이터 보기</button>
+        <button id="delete-draft" class="button" type="button">진행 중인 답변 삭제</button>
+        <button id="delete-all" class="button button--danger" type="button">게임 데이터 전체 삭제</button>
+      </div>
+      <div id="data-view" class="data-view" hidden>
+        <div>
+          <h3>진행 중인 답변 · sessionStorage</h3>
+          <div id="draft-data"></div>
+        </div>
+        <div>
+          <h3>완료 기록 · localStorage</h3>
+          <div id="history-data"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
