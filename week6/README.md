@@ -15,6 +15,7 @@ python -m flask --app app run --debug --port 5000
 
 ### Render 설정
 
+- 배포 주소: <https://campus-hotspots-week6.onrender.com/>
 - Root Directory: `week6`
 - Build Command: `pip install -r requirements.txt`
 - Start Command: `gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120`
@@ -37,13 +38,13 @@ python -m flask --app tts_app run --debug --port 5000
 
 필수 결과인 Canvas 파형, 서버 생성 시간, 음성 길이, WAV 크기를 표시합니다. 속도 선택, 음성 재생, WAV 다운로드도 함께 제공합니다.
 
-## 배포 전 확인
+## 확인 결과
 
-- 세 이미지 처리 방법과 Blur 커널 3·15·51을 확인합니다.
-- 파일 없음, 잘못된 처리 방법·커널, 지원하지 않는 파일, 크기 초과 응답을 확인합니다.
-- 서로 다른 영어 문장 두 개의 파형과 길이를 비교합니다.
-- 빈 문장, 300자 초과, 비영문 문장, 모델 없음 응답을 확인합니다.
-- 실제 측정값과 로컬 이미지·TTS 결과 화면은 최상위 README에 기록했습니다. Render URL과 공개 URL의 휴대전화 확인은 배포 후 추가합니다.
+- 세 이미지 처리 방법과 Blur 커널 3·15·51을 확인했습니다.
+- 파일 없음, 잘못된 처리 방법·커널, 지원하지 않는 파일, 크기 초과 응답을 확인했습니다.
+- 서로 다른 영어 문장 두 개의 파형과 길이를 비교했습니다.
+- 빈 문장, 300자 초과, 비영문 문장, 모델 없음 응답을 확인했습니다.
+- 실제 측정값과 이미지·TTS 결과 화면은 최상위 README에 기록했습니다. Render 공개 URL과 휴대전화의 이미지 업로드·결과 표시도 확인했습니다.
 
 ## 결과 화면
 
