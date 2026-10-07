@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ko">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>여행 영어 음성 카드 · Piper TTS</title><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"><script src="{{ url_for('static', filename='tts.js') }}" defer></script></head>
+<body><main>
+<nav class="site-nav" aria-label="6주차 실습 이동"><strong>WEEK 6 · FLASK SERVER</strong><div><a href="/">이미지 실험실</a><a aria-current="page" href="/tts">여행 영어 TTS</a></div></nav>
+<header class="hero hero--tts"><p class="eyebrow">TEXT → PYTHON MODEL → WAV → WAVEFORM</p><h1>여행 영어를 서버의 목소리로</h1><p>여행에서 바로 쓸 수 있는 영어 문장을 고르거나 직접 작성하세요. Flask 서버의 Piper 모델이 새 WAV를 만들고, 브라우저는 받은 음성을 파형과 수치로 분석합니다.</p></header>
+<section class="control-card"><p class="section-number">01 · CHOOSE A TRAVEL PHRASE</p><h2>여행 상황에 맞는 문장 만들기</h2>
+<div class="phrase-presets" role="group" aria-label="여행 영어 예문 선택">
+<button type="button" data-phrase="Excuse me, how can I get to the nearest train station?">길 찾기</button>
+<button type="button" data-phrase="Could you recommend a popular local restaurant nearby?">맛집 추천</button>
+<button type="button" data-phrase="I have a reservation under the name Geonwoo Heo.">숙소 체크인</button>
+</div>
+<form id="tts-form"><fieldset id="tts-controls">
+<label for="text">영어 문장 · 1~300자</label><textarea id="text" name="text" rows="5" maxlength="300" required>Excuse me, how can I get to the nearest train station?</textarea>
+<label for="length-scale">읽기 속도</label><select id="length-scale"><option value="0.8">조금 빠르게</option><option value="1.0" selected>보통</option><option value="1.25">천천히</option></select>
+<div class="actions"><button id="speak">Generate Speech · 음성 만들기</button></div>
+</fieldset></form><p id="tts-status" role="status">문장을 입력하고 버튼을 누르세요. 처음 요청은 모델 로딩 때문에 더 오래 걸릴 수 있습니다.</p>
+<div id="tts-result" hidden>
+<p class="section-number">02 · READ THE WAV</p><h2>서버가 만든 음성의 파형</h2>
+<canvas id="waveform" width="900" height="240" role="img" aria-label="서버가 생성한 WAV의 음량 변화를 나타내는 파형">이 브라우저는 Canvas를 지원하지 않습니다.</canvas>
+<dl class="audio-metrics"><div><dt>서버 생성 시간</dt><dd id="tts-time">—</dd></div><div><dt>음성 길이</dt><dd id="tts-duration">—</dd></div><div><dt>WAV 파일 크기</dt><dd id="tts-size">—</dd></div></dl>
+<p class="muted">파형은 브라우저가 받은 WAV를 분석해 그립니다. 아래 재생과 다운로드는 선택 사항입니다.</p>
+<audio id="audio" controls hidden></audio><p><a id="wav-download" download="speech.wav" hidden>WAV 내려받기</a></p>
+</div>
+<p><a href="/">이미지 실험실로 돌아가기</a></p></section>
+</main></body></html>
