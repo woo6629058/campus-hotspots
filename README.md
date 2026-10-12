@@ -1,6 +1,6 @@
 # Campus Hotspots
 
-가톨릭대학교 성심교정의 장소 소개에서 시작해 HTML·CSS·JavaScript, 데이터 시각화, 브라우저 저장소, Flask 서버의 이미지·음성 처리까지 주차별로 확장한 웹프로그래밍 실습 프로젝트입니다.
+가톨릭대학교 성심교정의 장소 소개에서 시작해 반응형 화면, 데이터 시각화, 여행 취향 게임, Flask 이미지·음성 처리, 로그인과 SQLite 여행 게시판까지 주차별로 확장한 웹프로그래밍 실습 프로젝트입니다.
 
 ### 프로젝트 주소
 
@@ -11,6 +11,8 @@
 - 게임 페이지: <https://woo6629058.github.io/campus-hotspots/week4/game.html>
 - 여행 취향 밸런스 게임: <https://woo6629058.github.io/campus-hotspots/week5/>
 - 이미지 처리 배포 주소: <https://campus-hotspots-week6.onrender.com/>
+- 여행 추천 게시판 로컬 주소: <http://127.0.0.1:5000/>
+
 ## 2주차: HTML과 페이지 연결
 
 ### 소개 장소
@@ -173,8 +175,11 @@ week5/
 - 이미지 처리 로컬 주소: <http://127.0.0.1:5000/>
 - 서버 TTS 로컬 주소: <http://127.0.0.1:5000/tts>
 
+이미지 처리와 TTS의 로컬 실행 명령, Render 설정은 [6주차 실행 안내](week6/README.md)에 정리했습니다.
+
 ### 실습 1 · 이미지 처리
 
+- 로컬 실행 명령: `python -m flask --app app run --debug --port 5000`
 - 휴대폰 확인 화면: Render 배포 주소를 휴대전화에서 열어 사진을 전송하고 원본·윤곽선 결과와 처리 시간이 세로 한 열로 표시되며 가로 넘침이 없음을 확인했습니다. [확인 화면](week6/screenshots/image-result-mobile.png)
 - 내가 수정한 내용: 제공 예제의 세 처리 방법과 form/fetch 흐름을 유지했습니다. 원본·서버 결과·처리 시간을 단계별 카드로 구분하고 데스크톱과 모바일에서 한눈에 비교할 수 있도록 반응형 디자인을 적용했습니다.
 - 브라우저가 보내는 값 / 서버가 돌려주는 값: 브라우저는 `FormData`에 JPEG/PNG 파일, `operation`, Blur용 `kernel`을 담아 `POST /api/process`로 보냅니다. 서버는 입력을 검사하고 OpenCV로 계산한 PNG를 반환하며 `X-Compute-Ms`, `X-Processing-Ms`, `X-Image-Size` 헤더에 측정값을 함께 보냅니다.
@@ -219,4 +224,81 @@ week6/
     ├── tts.js
     ├── style.css
     └── sample.png
+```
+
+## 7주차: 로그인과 DB 게시판
+
+### 주제
+
+**다음 여행지 한 줄 추천 게시판** — 친구에게 추천하고 싶은 여행지와 그곳에서 꼭 해볼 일을 짧게 공유하는 게시판입니다. 서로 다른 브라우저의 로그인 상태는 세션으로 구분하고, 계정·추천 글·신고 내용은 Flask 서버의 SQLite DB에 저장합니다.
+
+### 수정한 파일
+
+- `week7/app.py`: 회원가입·로그인·세션, 추천 글·신고, 관리자 권한과 SQLite 처리
+- `week7/schema.sql`: 사용자·추천 글·신고 테이블과 제약 조건
+- `week7/templates/`: 추천 목록, 로그인·회원가입, 관리자, 오류 화면
+- `week7/static/style.css`: 기존 프로젝트와 통일한 크림·청록 계열 반응형 디자인
+- `week7/mini_storage.py`: Python 리스트·JSON·SQLite의 수명 비교 예제
+- `week7/README.md`: 설치·실행·관리자 설정과 전체 확인 결과
+
+### 실행 명령
+
+```sh
+conda activate wp6
+cd /Users/heogeonwoo/study/campus-hotspots/week7
+~/miniconda3/envs/wp6/bin/python -m pip install -r requirements.txt
+export SECRET_KEY="$(~/miniconda3/envs/wp6/bin/python -c 'import secrets; print(secrets.token_hex(32))')"
+~/miniconda3/envs/wp6/bin/python -m flask --app app init-db
+~/miniconda3/envs/wp6/bin/python -m flask --app app run --debug --port 5000
+```
+
+관리자는 웹에서 실습용 계정을 먼저 만든 뒤 서버를 종료하고 `WEEK7_ADMIN_USERNAME`으로 해당 아이디를 지정해 생성합니다. 자세한 순서와 설정은 [7주차 실행 안내](week7/README.md)에 정리했습니다.
+
+### 두 계정의 확인 결과
+
+- 계정 A와 B가 각자 다른 세션으로 로그인하면서 서버의 같은 여행 추천 목록을 보는 것을 확인했습니다.
+- A의 추천 글이 B에게도 표시되지만, 삭제는 작성자인 A에게만 허용되고 B의 삭제 요청에는 `403`이 반환되는 것을 확인했습니다.
+- 서버를 다시 시작해 별도 SQLite 연결로 조회해도 저장한 계정과 추천 글이 유지되는 것을 확인했습니다.
+- 잘못된 비밀번호와 중복 아이디가 거절되고, 비밀번호 원문 대신 해시가 저장되는 것을 확인했습니다.
+
+### 관리자 기능 시험 결과
+
+- 일반 계정의 `/admin` 직접 접근은 `403`으로 차단되는 것을 확인했습니다.
+- 관리자가 추천 글 검색, 신고된 글 필터, 신고 이유 확인, 글 삭제, 사용자 차단·해제를 할 수 있음을 확인했습니다.
+- 차단된 계정은 새로 로그인할 수 없고 추천 글도 작성할 수 없으며, 해제 후에는 다시 로그인할 수 있음을 확인했습니다.
+- 연습 계정 2개와 여행 글 4개를 생성한 뒤 연습 데이터만 정리해도 직접 만든 계정과 글이 유지되는 것을 확인했습니다.
+- CSRF 없는 POST는 `400`, 한 계정의 1분 내 네 번째 글은 `429`, 본인 글·중복 신고는 `400`으로 처리되는 것을 확인했습니다.
+- `<script>` 입력은 실행되지 않고 글자로 표시되며, SQL 입력에는 `?` 매개변수를 사용하는 것을 확인했습니다.
+
+### 실행 화면
+
+- [데스크톱 추천 목록](week7/screenshots/travel-board-desktop.png)
+- [390px 모바일 추천 목록](week7/screenshots/travel-board-mobile.png)
+
+### LLM 활용
+
+- 도움받은 작업과 대표 질문: 7주차 필수 조건을 확인하고 공식 예제의 계정·세션·CSRF·SQLite·관리 기능을 여행 추천 서비스로 구성하는 데 도움을 받았습니다. 대표 질문은 “여행지와 꼭 해볼 일을 공유하는 한 줄 게시판으로 바꾸되, 두 계정 세션, 작성자 권한, 신고, 관리자 검색·차단, 테스트 데이터와 보안 조건을 모두 유지해 줘”였습니다.
+- 직접 수정한 부분: 게시판 주제와 질문, 여행 추천 예시, 관리자 연습 글, 화면 문구와 기존 프로젝트에 맞춘 반응형 디자인을 검토하고 수정했습니다.
+- 실행하여 확인한 내용: Python 구문 검사와 통합 검사로 회원가입·로그인·글 등록·소유자 삭제·신고·관리자 권한·차단·연습 데이터 정리·오류 상태를 확인하고, 데스크톱과 390px 화면에서 가로 넘침 없이 표시되는 것을 확인했습니다.
+
+### 7주차 파일 구조
+
+```text
+week7/
+├── app.py
+├── schema.sql
+├── mini_storage.py
+├── requirements.txt
+├── README.md
+├── templates/
+│   ├── base.html
+│   ├── auth.html
+│   ├── comments.html
+│   ├── admin.html
+│   └── error.html
+├── static/
+│   └── style.css
+└── screenshots/
+    ├── travel-board-desktop.png
+    └── travel-board-mobile.png
 ```

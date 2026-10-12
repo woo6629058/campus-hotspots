@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}관리 화면 · {{ board_title }}{% endblock %}
+{% block content %}
+<section class="hero admin-hero">
+  <div class="hero-copy">
+    <p class="eyebrow">ADMIN CONTROL</p>
+    <h1>여행 추천 관리</h1>
+    <p class="lead">신고된 글을 확인하고 계정과 연습 데이터를 관리합니다.</p>
+    <p class="hero-note">이 화면은 관리자만 열 수 있으며, 일반 계정이 주소를 직접 입력하면 403 응답을 받습니다.</p>
+  </div>
+  <div class="admin-summary" aria-label="현재 연습 데이터 수">
+    <div><strong>{{ test_user_count }}</strong><span>연습 계정</span></div>
+    <div><strong>{{ test_comment_count }}</strong><span>연습 글</span></div>
+  </div>
+</section>
+
+<section class="panel test-data-panel">
+  <div class="section-heading">
+    <div>
+      <p class="section-number">STEP 01</p>
+      <h2>관리 기능 연습 데이터</h2>
+    </div>
+  </div>
+  <p>연습 계정 2개와 여행 글 4개를 자동으로 생성합니다. 두 계정의 공통 비밀번호는 생성 직후 이 화면에서 한 번만 표시됩니다.</p>
+  {% if test_credentials %}
+    <div class="test-credentials" role="status">
+      <strong>방금 생성한 연습 계정</strong>
+      <p>아이디: <code>{{ test_credentials.names|join(' / ') }}</code></p>
+      <p>공통 비밀번호: <code>{{ test_credentials.password }}</code></p>
+      <small>새로고침하면 비밀번호는 다시 표시되지 않습니다. 실습 외의 용도로 사용하지 마세요.</small>
+    </div>
+  {% endif %}
+  {% if test_notice %}<p class="notice" role="status">{{ test_notice }}</p>{% endif %}
+  <div class="test-data-actions">
+    <form method="post" action="{{ url_for('create_test_data') }}">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+      <button class="primary" type="submit">연습 계정·글 생성</button>
+    </form>
+    <form method="post" action="{{ url_for('delete_test_data') }}" onsubmit="return confirm('연습 계정과 해당 계정의 글을 모두 삭제할까요?')">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+      <button class="delete-button large" type="submit" {% if not test_user_count %}disabled{% endif %}>연습 데이터 모두 삭제</button>
+    </form>
+  </div>
+  <p class="helper">삭제할 때는 연습 표시가 있는 계정과 해당 글·관련 신고만 지우며, 직접 가입한 일반 계정과 글은 유지합니다.</p>
+</section>
+
+<section class="panel">
+  <div class="section-heading">
+    <div>
+      <p class="section-number">STEP 02</p>
+      <h2>추천 글 검색·신고 확인</h2>
+    </div>
+    <span class="count-badge">{{ comments|length }}개</span>
+  </div>
+  <form method="get" action="{{ url_for('admin') }}" class="search-form">
+    <div>
+      <label for="query">내용으로 검색</label>
+      <input id="query" name="q" value="{{ query }}" maxlength="100" placeholder="예: 부산 또는 [연습]">
+    </div>
+    <label class="inline-check"><input type="checkbox" name="reported" value="1" {% if reported_only %}checked{% endif %}> 신고된 글만 보기</label>
+    <button class="primary" type="submit">조건 적용</button>
+  </form>
+  <ol class="comment-list admin-comments">
+    {% for comment in comments %}
+      <li class="comment-card">
+        <div class="comment-meta"><strong>{{ comment['username'] }}</strong><time>{{ comment['created_at'] }} UTC</time></div>
+        <p class="comment-text">{{ comment['content'] }}</p>
+        <p class="report-count">신고 {{ comment['report_count'] }}건{% if comment['report_reasons'] %}<span> · 이유: {{ comment['report_reasons'] }}</span>{% endif %}</p>
+        <form method="post" action="{{ url_for('admin_delete_comment', comment_id=comment['id']) }}" onsubmit="return confirm('관리자 권한으로 이 글을 삭제할까요?')">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+          <button class="delete-button" type="submit">관리자 삭제</button>
+        </form>
+      </li>
+    {% else %}
+      <li class="empty-state">조건에 맞는 추천 글이 없습니다.</li>
+    {% endfor %}
+  </ol>
+</section>
+
+<section class="panel">
+  <div class="section-heading">
+    <div>
+      <p class="section-number">STEP 03</p>
+      <h2>사용자 관리</h2>
+    </div>
+  </div>
+  <ul class="user-list">
+    {% for user in users %}
+      <li>
+        <span>
+          <strong>{{ user['username'] }}</strong>
+          {% if user['is_test'] %}<small class="role-tag">연습</small>{% endif %}
+          {% if user['is_admin'] %}<small class="role-tag admin">관리자</small>{% elif user['is_blocked'] %}<small class="role-tag blocked">차단됨</small>{% endif %}
+        </span>
+        {% if not user['is_admin'] %}
+          <form method="post" action="{{ url_for('block_user', user_id=user['id']) }}">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+            <button class="delete-button" type="submit">{{ '차단 해제' if user['is_blocked'] else '차단' }}</button>
+          </form>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}
+

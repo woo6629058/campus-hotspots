@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="로그인한 여행자가 함께 만드는 다음 여행지 한 줄 추천 게시판">
+  <title>{% block title %}{{ board_title }}{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="{{ url_for('comments') }}">
+        <span>WEEK 7 · FLASK SERVER</span>
+      </a>
+      <nav aria-label="계정 메뉴">
+        {% if current_user %}<span class="current-user">{{ current_user['username'] }}님</span>{% endif %}
+        <a href="{{ url_for('comments') }}" {% if request.endpoint == 'comments' %}aria-current="page"{% endif %}>여행 추천</a>
+        {% if current_user %}
+          {% if current_user['is_admin'] %}<a href="{{ url_for('admin') }}" {% if request.endpoint == 'admin' %}aria-current="page"{% endif %}>관리 화면</a>{% endif %}
+          <form method="post" action="{{ url_for('logout') }}">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+            <button class="text-button" type="submit">로그아웃</button>
+          </form>
+        {% else %}
+          <a href="{{ url_for('login') }}" {% if request.endpoint == 'login' %}aria-current="page"{% endif %}>로그인</a>
+          <a href="{{ url_for('register') }}" {% if request.endpoint == 'register' %}aria-current="page"{% endif %}>회원가입</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="wrap site-footer">
+    <strong>WEEK 7 · TRAVEL NOTE</strong>
+    <span>여행 추천은 SQLite에, 로그인 상태는 각 브라우저의 세션에 저장됩니다.</span>
+  </footer>
+</body>
+</html>
+

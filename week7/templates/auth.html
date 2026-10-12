@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ '회원가입' if mode == 'register' else '로그인' }} · {{ board_title }}{% endblock %}
+{% block content %}
+<section class="panel auth-panel">
+  <div class="auth-intro">
+    <p class="eyebrow">{{ 'NEW TRAVELER' if mode == 'register' else 'WELCOME BACK' }}</p>
+    <h1>{{ '여행자 계정 만들기' if mode == 'register' else '다시 여행을 이어가요' }}</h1>
+    <p>실제 개인정보나 다른 서비스에서 쓰는 비밀번호 대신 이 과제에서만 사용할 계정을 만들어 주세요.</p>
+    <ul class="auth-points">
+      <li>비밀번호는 해시로 변환해 DB에 저장합니다.</li>
+      <li>로그인 상태는 브라우저별 세션으로 구분합니다.</li>
+      <li>추천 목록은 같은 서버를 이용하는 모두가 공유합니다.</li>
+    </ul>
+  </div>
+  <div class="auth-form-card">
+    <h2>{{ '회원가입' if mode == 'register' else '로그인' }}</h2>
+    {% if request.args.get('registered') %}<p class="notice">계정이 만들어졌습니다. 방금 만든 정보로 로그인해 주세요.</p>{% endif %}
+    {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+    <form method="post" action="{{ url_for(mode) }}">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+      <label for="username">아이디</label>
+      <span class="field-help">영문·숫자·밑줄 3~20자</span>
+      <input id="username" name="username" value="{{ username|default('') }}" minlength="3" maxlength="20" autocomplete="username" required>
+      <label for="password">비밀번호</label>
+      <span class="field-help">8~128자</span>
+      <input id="password" name="password" type="password" minlength="8" maxlength="128" autocomplete="{{ 'new-password' if mode == 'register' else 'current-password' }}" required>
+      <button class="primary full-button" type="submit">{{ '계정 만들기' if mode == 'register' else '로그인' }}</button>
+    </form>
+    <p class="switch-link">
+      {% if mode == 'register' %}<a href="{{ url_for('login') }}">이미 계정이 있나요? 로그인</a>
+      {% else %}<a href="{{ url_for('register') }}">처음 방문했나요? 회원가입</a>{% endif %}
+    </p>
+  </div>
+</section>
+{% endblock %}
+
