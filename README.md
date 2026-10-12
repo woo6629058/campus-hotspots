@@ -244,34 +244,26 @@ week6/
 
 - 로컬 실행 명령: `cd week7 && ~/miniconda3/envs/wp6/bin/python -m flask --app app init-db && ~/miniconda3/envs/wp6/bin/python -m flask --app app run --debug --port 5000`
 - 주제: 친구에게 추천하고 싶은 여행지와 그곳에서 꼭 해볼 일을 짧게 공유하는 게시판입니다. 서로 다른 브라우저의 로그인 상태는 세션으로 구분하고, 계정·추천 글·신고 내용은 Flask 서버의 SQLite DB에 저장합니다.
-
 - 수정한 파일:
-
   - `week7/app.py`: 회원가입·로그인·세션, 추천 글·신고, 관리자 권한과 SQLite 처리
   - `week7/schema.sql`: 사용자·추천 글·신고 테이블과 제약 조건
   - `week7/templates/`: 추천 목록, 로그인·회원가입, 관리자, 오류 화면
   - `week7/static/style.css`: 기존 프로젝트와 통일한 크림·청록 계열 반응형 디자인
   - `week7/mini_storage.py`: Python 리스트·JSON·SQLite의 수명 비교 예제
   - `week7/README.md`: 설치·실행·관리자 설정과 전체 확인 결과
-
 - 두 계정의 확인 결과:
-
   - 계정 A와 B가 각자 다른 세션으로 로그인하면서 서버의 같은 여행 추천 목록을 보는 것을 확인했습니다.
   - A의 추천 글이 B에게도 표시되지만, 삭제는 작성자인 A에게만 허용되고 B의 삭제 요청에는 `403`이 반환되는 것을 확인했습니다.
   - 로컬 서버를 다시 시작해 별도 SQLite 연결로 조회해도 저장한 계정과 추천 글이 유지되는 것을 확인했습니다.
   - 잘못된 비밀번호와 중복 아이디가 거절되고, 비밀번호 원문 대신 해시가 저장되는 것을 확인했습니다.
-
 - 관리자 기능 시험 결과:
-
   - 일반 계정의 `/admin` 직접 접근은 `403`으로 차단되는 것을 확인했습니다.
   - 관리자가 추천 글 검색, 신고된 글 필터, 신고 이유 확인, 글 삭제, 사용자 차단·해제를 할 수 있음을 확인했습니다.
   - 차단된 계정은 새로 로그인할 수 없고 추천 글도 작성할 수 없으며, 해제 후에는 다시 로그인할 수 있음을 확인했습니다.
   - 연습 계정 2개와 여행 글 4개를 생성한 뒤 연습 데이터만 정리해도 직접 만든 계정과 글이 유지되는 것을 확인했습니다.
   - CSRF 없는 POST는 `400`, 한 계정의 1분 내 네 번째 글은 `429`, 본인 글·중복 신고는 `400`으로 처리되는 것을 확인했습니다.
   - `<script>` 입력은 실행되지 않고 글자로 표시되며, SQL 입력에는 `?` 매개변수를 사용하는 것을 확인했습니다.
-
-- 실행 화면: [데스크톱 추천 목록](week7/screenshots/travel-board-desktop.png),
-  [390px 모바일 추천 목록](week7/screenshots/travel-board-mobile.png)
+- 실행 화면: [데스크톱 추천 목록](week7/screenshots/travel-board-desktop.png), [390px 모바일 추천 목록](week7/screenshots/travel-board-mobile.png)
 
 ### LLM 활용
 
