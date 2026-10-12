@@ -103,7 +103,7 @@ def bootstrap_admin_command():
 
     db = get_db()
     existing = db.execute(
-        "SELECT id FROM users WHERE username = ?", (username,)
+        "SELECT id, is_admin FROM users WHERE username = ?", (username,)
     ).fetchone()
     if existing is None:
         db.execute(
@@ -112,11 +112,15 @@ def bootstrap_admin_command():
         )
         print(f"관리자 계정 생성 완료: {username}")
     else:
+        if not existing["is_admin"]:
+            raise RuntimeError(
+                "이미 일반 계정으로 사용 중인 아이디입니다. 다른 관리자 아이디를 설정하세요."
+            )
         db.execute(
-            "UPDATE users SET is_admin = 1, is_blocked = 0 WHERE id = ?",
-            (existing["id"],),
+            "UPDATE users SET password_hash = ?, is_blocked = 0 WHERE id = ?",
+            (generate_password_hash(password), existing["id"]),
         )
-        print(f"기존 관리자 계정 확인 완료: {username}")
+        print(f"기존 관리자 비밀번호 갱신 완료: {username}")
     db.commit()
 
 
