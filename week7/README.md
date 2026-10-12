@@ -1,6 +1,9 @@
 # 7주차 · 다음 여행지 한 줄 추천 게시판
 친구에게 추천하고 싶은 여행지와 그곳에서 꼭 해볼 일을 공유하는 Flask 게시판입니다. 로그인 상태는 브라우저별 세션으로 구분하고, 계정·추천 글·신고 내용은 서버의 SQLite DB에 저장합니다.
 
+
+ Render 무료 배포에서는 서버가 재시작되면 DB 기록이 사라질 수 있습니다.
+
 ## 구현한 기능
 
 - 회원가입·로그인·로그아웃과 Werkzeug 비밀번호 해시
@@ -41,8 +44,32 @@ export WEEK7_ADMIN_USERNAME='admin7'
 ~/miniconda3/envs/wp6/bin/python -m flask --app app run --debug --port 5000
 ```
 
-다시 로그인하면 상단에 `관리 화면` 링크가 나타납니다. 관리자 권한은 회원가입 화면에서 고를 수 없고 로컬 터미널 명령으로만 지정합니다.
+다시 로그인하면 상단에 `관리 화면` 링크가 나타납니다. 관리자 권한은 회원가입 화면에서 고를 수 없습니다. 로컬에서는 위 명령으로 지정하고, Render 무료 배포에서는 아래 환경변수로 관리자 계정을 준비합니다.
 
+## Render 배포
+
+6주차 이미지 앱과는 **별도의 Web Service**로 만듭니다. GitHub에 최신 코드를 push한 뒤 Render에서 다음과 같이 설정합니다.
+
+| 설정 | 값 |
+| --- | --- |
+| Repository / Branch | 이 저장소 / 실제 사용하는 브랜치 |
+| Root Directory | `week7` |
+| Language | `Python 3` |
+| Build Command | `pip install -r requirements.txt` |
+| Start Command | `python -m flask --app app init-db && python -m flask --app app bootstrap-admin && gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120` |
+| Instance Type | `Free`  |
+
+Render의 **Environment**에서 아래 값을 설정합니다. 값 자체는 GitHub와 README에 쓰지 않습니다.
+
+- `SECRET_KEY`: 한 번 생성한 32자 이상의 무작위 문자열. 로컬에서 `python -c 'import secrets; print(secrets.token_hex(32))'`로 만들 수 있습니다. 재배포 때도 같은 값을 유지합니다.
+- `PYTHON_VERSION`: `3.12.12` (수업의 Python 3.12 환경과 맞춤).
+- `APP_HTTPS`: `1` (HTTPS에서만 세션 쿠키 전송).
+- `WEEK7_ADMIN_USERNAME`: 관리자 아이디. 영문·숫자·밑줄 3~20자.
+- `WEEK7_ADMIN_PASSWORD`: 관리자 비밀번호. 12~128자. 재시작으로 DB가 새로 만들어질 때 관리자 계정도 다시 생성됩니다.
+
+배포가 Live 상태가 되면 Render가 부여한 주소의 `/comments`에서 회원가입·로그인·글 등록을 확인합니다. Render 무료 배포는 일정 시간 사용하지 않으면 종료될 수 있고, **SQLite 파일은 재시작·재배포·유휴 종료 시 사라집니다.** 그때 일반 계정·글·신고 기록도 초기화되고 로그인 세션은 유효하지 않게 됩니다. 시작 명령의 `init-db`와 `bootstrap-admin`이 빈 DB와 관리자 계정을 다시 준비하지만, 일반 계정과 글은 복원하지 않습니다. 따라서 이 배포는 기록 보존용이 아닌 수업 시연용입니다.
+
+관리자 비밀번호를 변경할 때는 기존 DB에 저장된 비밀번호가 자동으로 바뀌지 않습니다. Render 무료 배포에서는 DB가 초기화된 다음 새 비밀번호가 적용됩니다.
 ## 두 계정 확인 결과
 
 - 계정 A와 B를 서로 다른 테스트 클라이언트로 로그인해 각자 다른 세션을 유지하는 것을 확인했습니다.
@@ -96,5 +123,5 @@ week7/
     └── travel-board-mobile.png
 ```
 
-`instance/`에는 로컬 DB가 생성되며 `.gitignore`로 제외됩니다. 이 실습은 로컬 서버 실행이 목표이므로 외부에 배포하지 않습니다.
+`instance/`에는 SQLite DB가 생성되며 `.gitignore`로 제외됩니다. 로컬에서는 파일이 남지만, Render 무료 배포에서는 재시작 후 기록이 사라질 수 있습니다.
 

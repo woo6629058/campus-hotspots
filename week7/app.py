@@ -62,6 +62,10 @@ def init_db_command():
             get_db().execute(
                 f"ALTER TABLE users ADD COLUMN {column} INTEGER NOT NULL DEFAULT 0"
             )
+    get_db().execute(
+        "INSERT OR IGNORE INTO app_meta (key, value) VALUES ('generation', ?)",
+        (secrets.token_urlsafe(32),),
+    )
     get_db().commit()
     print(f"DB 준비 완료: {app.config['DATABASE']}")
 
@@ -83,19 +87,58 @@ def promote_admin_command():
     print(f"관리자 지정 완료: {username}")
 
 
+@app.cli.command("bootstrap-admin")
+def bootstrap_admin_command():
+    """Render 재시작으로 DB가 초기화되어도 관리자 계정을 다시 준비합니다."""
+    username = os.environ.get("WEEK7_ADMIN_USERNAME", "").strip()
+    password = os.environ.get("WEEK7_ADMIN_PASSWORD", "")
+    if not username and not password:
+        print("관리자 자동 생성 건너뜀: 환경변수가 설정되지 않았습니다.")
+        return
+    if not USERNAME_RULE.fullmatch(username) or not 12 <= len(password) <= 128:
+        raise RuntimeError(
+            "WEEK7_ADMIN_USERNAME은 영문·숫자·밑줄 3~20자, "
+            "WEEK7_ADMIN_PASSWORD는 12~128자로 설정하세요."
+        )
+
+    db = get_db()
+    existing = db.execute(
+        "SELECT id FROM users WHERE username = ?", (username,)
+    ).fetchone()
+    if existing is None:
+        db.execute(
+            "INSERT INTO users (username, password_hash, is_admin) VALUES (?, ?, 1)",
+            (username, generate_password_hash(password)),
+        )
+        print(f"관리자 계정 생성 완료: {username}")
+    else:
+        db.execute(
+            "UPDATE users SET is_admin = 1, is_blocked = 0 WHERE id = ?",
+            (existing["id"],),
+        )
+        print(f"기존 관리자 계정 확인 완료: {username}")
+    db.commit()
+
+
 @app.before_request
 def load_user_and_check_csrf():
     """세션의 사용자를 읽고 모든 POST 요청의 CSRF 값을 확인합니다."""
     g.user = None
     user_id = session.get("user_id")
     if isinstance(user_id, int):
-        g.user = get_db().execute(
-            "SELECT id, username, is_admin, is_blocked FROM users WHERE id = ?",
-            (user_id,),
+        generation = get_db().execute(
+            "SELECT value FROM app_meta WHERE key = 'generation'"
         ).fetchone()
-        if g.user is None or g.user["is_blocked"]:
-            g.user = None
+        if generation is None or session.get("db_generation") != generation["value"]:
             session.clear()
+        else:
+            g.user = get_db().execute(
+                "SELECT id, username, is_admin, is_blocked FROM users WHERE id = ?",
+                (user_id,),
+            ).fetchone()
+            if g.user is None or g.user["is_blocked"]:
+                g.user = None
+                session.clear()
     elif user_id is not None:
         session.clear()
 
@@ -229,6 +272,9 @@ def login():
 
     session.clear()
     session["user_id"] = user["id"]
+    session["db_generation"] = get_db().execute(
+        "SELECT value FROM app_meta WHERE key = 'generation'"
+    ).fetchone()["value"]
     session["_csrf_token"] = secrets.token_urlsafe(32)
     return redirect(url_for("comments"))
 
